@@ -32,6 +32,14 @@ ol, ul {
     width: 34px;
 }
 
+.square-valid {
+    background: #1ddb8c;
+}
+
+.square-invalid {
+    background: #c47c7c;
+}
+
 .square:focus {
     outline: none;
 }
@@ -47,4 +55,13 @@ ol, ul {
 
 .game-info {
     margin-left: 20px;
+}
+
+.help-button {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+.status {
+    font-weight: bold;
 }
