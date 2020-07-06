@@ -208,7 +208,7 @@ class Game extends React.Component {
                         <div>Règles</div>
                         <ol>
                             <li>NOIR joue en premier.</li>
-                            <li>Un pion doit être adjacent à un pion adverseet doit encadrer un ou plusieurs pions
+                            <li>Un pion doit être adjacent à un pion adverse et doit encadrer un ou plusieurs pions
                                 adverses.
                             </li>
                             <li>Les pions encadrés sont retournés sans réaction en chaîne.</li>
