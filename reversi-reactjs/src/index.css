@@ -36,10 +36,6 @@ ol, ul {
     background: #1ddb8c;
 }
 
-.square-invalid {
-    background: #c47c7c;
-}
-
 .square:focus {
     outline: none;
 }

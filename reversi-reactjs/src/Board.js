@@ -1,6 +1,7 @@
 import React from 'react';
 import './index.css';
 import {SIZE} from './constants';
+import HelpContext from "./HelpContext";
 
 function Square(props) {
     return (
@@ -13,10 +14,14 @@ function Square(props) {
 class Board extends React.Component {
 
     renderSquare(i, j) {
-        return <Square key={i * SIZE + j}
-                       value={this.props.board[i][j]}
-                       onClick={() => this.props.onClick(i, j)}
-                       className={"square"}/>;
+        return <HelpContext.Consumer key={i * SIZE + j}>
+            {context =>
+                <Square key={i * SIZE + j}
+                        value={this.props.board[i][j]}
+                        onClick={() => this.props.onClick(i, j)}
+                        className={"square" + (context.enabled && context.isValidSquare(context.next, this.props.board, i, j) ? " square-valid" : "")}/>
+            }
+        </HelpContext.Consumer>
     }
 
     render() {

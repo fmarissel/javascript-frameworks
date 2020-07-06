@@ -1,11 +1,13 @@
 import React from 'react';
 import './index.css';
-import Board from "./board";
+import Board from "./Board";
 import {COLOR, SIZE} from './constants';
+import HelpContext from "./HelpContext";
 
 // const NextPlayer = React.createContext(COLOR.BLACK);
 
 class Game extends React.Component {
+
     constructor(props) {
         super(props);
 
@@ -29,7 +31,13 @@ class Game extends React.Component {
                 board: matrix,
                 next: COLOR.BLACK
             }],
-            stepNumber: 0
+            stepNumber: 0,
+            enabled: false,
+            next: COLOR.BLACK,
+            toggle: () => {
+                this.setState({enabled: !this.state.enabled});
+            },
+            isValidSquare: this.isLegalMove.bind(this)
         }
     }
 
@@ -39,16 +47,18 @@ class Game extends React.Component {
 
         // you can't use current.board.slice() on multi-dimensional array because array aren't immutable
         let board = current.board.map(row => row.slice());
-        const next = current.next;
+        let next = current.next;
 
         if (this.isLegalMove(next, board, i, j)) {
             board = this.playMove(next, board, i, j);
 
+            next = this.getNextPlayer(next, board);
             this.setState({
                 history: history.concat([{
                     board: board,
-                    next: this.getNextPlayer(next, board)
+                    next: next
                 }]),
+                next: next,
                 stepNumber: history.length
             });
         }
@@ -175,31 +185,40 @@ class Game extends React.Component {
         });
 
         return (
-            <div className="game">
-                <div className="game-board">
-                    <Board board={current.board}
-                           onClick={(i, j) => this.handleClick(i, j)}/>
+            <HelpContext.Provider value={this.state}>
+                <div className="game">
+                    <div className="game-board">
+                        <Board board={current.board}
+                               onClick={(i, j) => this.handleClick(i, j)}/>
+                    </div>
+                    <div className="game-info">
+                        <div className="status">{status}</div>
+                        <ol>{moves}</ol>
+                    </div>
+                    <div className="game-info">
+                        <div>Aide :</div>
+                        <HelpContext.Consumer>
+                            {context => (
+                                <button className="help-button"
+                                        onClick={() => context.toggle()}>{(context.enabled ? "Masquer" : "Afficher") + " les coups possibles"}
+                                </button>
+                            )}
+
+                        </HelpContext.Consumer>
+                        <div>Règles</div>
+                        <ol>
+                            <li>NOIR joue en premier.</li>
+                            <li>Un pion doit être adjacent à un pion adverseet doit encadrer un ou plusieurs pions
+                                adverses.
+                            </li>
+                            <li>Les pions encadrés sont retournés sans réaction en chaîne.</li>
+                            <li>Les joueurs jouent chacun leur tour.</li>
+                            <li>Un joueur passe son tour si il ne peut pas jouer de coup légal.</li>
+                            <li>Le joueur ayant le plus de pion de sa couleur à la fin gagne.</li>
+                        </ol>
+                    </div>
                 </div>
-                <div className="game-info">
-                    <div className="status">{status}</div>
-                    <ol>{moves}</ol>
-                </div>
-                <div className="game-info">
-                    <div>Aide :</div>
-                    <button className="help-button" onClick={() => alert('TODO')}>Afficher les coups possibles</button>
-                    <div>Règles</div>
-                    <ol>
-                        <li>NOIR joue en premier.</li>
-                        <li>Un pion doit être adjacent à un pion adverseet doit encadrer un ou plusieurs pions
-                            adverses.
-                        </li>
-                        <li>Les pions encadrés sont retournés sans réaction en chaîne.</li>
-                        <li>Les joueurs jouent chacun leur tour.</li>
-                        <li>Un joueur passe son tour si il ne peut pas jouer de coup légal.</li>
-                        <li>Le joueur ayant le plus de pion de sa couleur à la fin gagne.</li>
-                    </ol>
-                </div>
-            </div>
+            </HelpContext.Provider>
         );
     }
 }
